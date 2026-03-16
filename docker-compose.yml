@@ -1,0 +1,38 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: fastify-template-mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Optional: docker compose --profile extras up -d
+  redis:
+    profiles: [extras]
+    image: redis:7-alpine
+    container_name: fastify-template-redis
+    ports:
+      - '6379:6379'
+
+  postgres:
+    profiles: [extras]
+    image: postgres:16-alpine
+    container_name: fastify-template-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: app
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  mongo_data:
+  postgres_data:
